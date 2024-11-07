@@ -6,7 +6,7 @@ import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
-from langchain.chat_models import ChatOpenAI
+from langchain_anthropic.chat_models import ChatAnthropic
 from langchain.chains import RetrievalQA
 from .pdf_processor import PDFProcessor
 import src.config as config
@@ -60,10 +60,10 @@ class PAESQuestionAnswerer:
         if not self.vectorstore:
             raise ValueError("Vector store must be created first")
 
-        llm = ChatOpenAI(
+        llm = ChatAnthropic(
             model_name=config.MODEL_NAME,
             temperature=0,
-            openai_api_key=config.OPENAI_API_KEY
+            anthropic_api_key=config.ANTHROPIC_API_KEY
         )
 
         self.qa_chain = RetrievalQA.from_chain_type(
