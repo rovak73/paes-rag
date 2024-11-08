@@ -6,7 +6,7 @@ import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 import google.generativeai as genai
 from langchain_community.chat_models import ChatOpenAI
@@ -32,6 +32,8 @@ class PAESQuestionAnswerer:
             self.embeddings = GoogleGenerativeAIEmbeddings(
                 model="models/embedding-001",
                 google_api_key=config.GEMINI_API_KEY,
+                task_type="retrieval_document",  # Ensures 384 dimensions
+                dimensions=384
             )
         elif config.USE_LOCAL_LLM:
             self.embeddings = HuggingFaceEmbeddings(
