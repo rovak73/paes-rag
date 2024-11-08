@@ -15,8 +15,10 @@ env/
 # Data and Logs
 data/chroma/
 data/processed/
-models/*
+data/
+models/
 *.log
+.aider.tags.cache.v3
 
 # Testing
 .pytest_cache/
