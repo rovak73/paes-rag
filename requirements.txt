@@ -7,3 +7,4 @@ langchain
 tiktoken
 pytest
 llama-cpp-python
+google-generative-ai

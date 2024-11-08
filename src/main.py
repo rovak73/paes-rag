@@ -7,10 +7,12 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+import google.generative.ai as genai
 from langchain_community.chat_models import ChatOpenAI
 from langchain_community.llms import LlamaCpp
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import RetrievalQA
 from .pdf_processor import PDFProcessor
 import src.config as config
@@ -72,10 +74,17 @@ class PAESQuestionAnswerer:
         if not self.vectorstore:
             raise ValueError("Vector store must be created first")
 
-        if config.USE_LOCAL_LLM:
+        if config.USE_GEMINI:
+            # Set up Gemini model
+            llm = ChatGoogleGenerativeAI(
+                model=config.GEMINI_MODEL,
+                google_api_key=config.GEMINI_API_KEY,
+                temperature=0,
+                convert_system_message_to_human=True
+            )
+        elif config.USE_LOCAL_LLM:
             # Set up Llama model
             callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
-
             
             llm = LlamaCpp(
                 model_path=config.LLAMA_MODEL_PATH,
@@ -149,7 +158,8 @@ def main():
     
     # Interactive question answering loop
     print("\nPAES Question Answerer ready!")
-    print(f"Using {'Llama' if config.USE_LOCAL_LLM else 'OpenAI'} model")
+    model_type = "Gemini" if config.USE_GEMINI else ("Llama" if config.USE_LOCAL_LLM else "OpenAI")
+    print(f"Using {model_type} model")
     print("Type 'exit' to quit")
     
     while True:

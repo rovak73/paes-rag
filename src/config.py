@@ -7,8 +7,11 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# OpenAI API configuration
+# API configurations
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+USE_GEMINI = os.getenv("USE_GEMINI", "false").lower() == "true"
+GEMINI_MODEL = "gemini-1.5-pro-002"
 
 # Vector store settings
 CHROMA_PERSIST_DIRECTORY = "data/chroma"
