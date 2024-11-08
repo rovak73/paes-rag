@@ -8,6 +8,7 @@ tiktoken
 pytest
 llama-cpp-python
 google.generativeai
-langchain-google-genai
+langchain-google-genai>=0.0.3
+langchain-openai
 sentence-transformers
 tokenizers>=0.20.0

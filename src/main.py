@@ -4,8 +4,9 @@ Main module for the PAES RAG application.
 from typing import List, Dict
 import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 import google.generativeai as genai
 from langchain_community.chat_models import ChatOpenAI
@@ -27,7 +28,12 @@ class PAESQuestionAnswerer:
         )
         
         # Choose embeddings based on model type
-        if config.USE_LOCAL_LLM:
+        if config.USE_GEMINI:
+            self.embeddings = GoogleGenerativeAIEmbeddings(
+                model="models/embedding-001",
+                google_api_key=config.GEMINI_API_KEY,
+            )
+        elif config.USE_LOCAL_LLM:
             self.embeddings = HuggingFaceEmbeddings(
                 model_name="sentence-transformers/all-MiniLM-L6-v2"
             )
