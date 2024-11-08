@@ -15,6 +15,7 @@ env/
 # Data and Logs
 data/chroma/
 data/processed/
+models/*
 *.log
 
 # Testing

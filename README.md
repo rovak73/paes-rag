@@ -3,6 +3,17 @@
 ## Project Description
 Automated Question Answering System for PAES (University Admission Test) using Retrieval Augmented Generation (RAG). The system processes exam PDFs and provides detailed answers based on the source material.
 
+PAES stands for the Prueba de Acceso a la Educación Superior, which is Chile’s standardized test for university admissions. Introduced in 2022, PAES replaced the previous test known as the Prueba de Selección Universitaria (PSU).
+
+### The PAES assesses competencies across several core areas:
+
+- Reading Comprehension
+- Mathematics (with PAES Math 1 for all applicants, and an additional PAES Math 2 for more demanding math-focused programs)
+- Sciences (covering biology, chemistry, and physics)
+- History and Social Sciences
+
+PAES emphasizes practical reasoning and problem-solving skills rather than rote memorization, aiming to provide a more holistic and fair assessment of students’ readiness for higher education in Chile.
+
 ## Key Features
 - PDF text extraction from PAES exams
 - Vector storage using ChromaDB for efficient retrieval
@@ -23,7 +34,7 @@ Automated Question Answering System for PAES (University Admission Test) using R
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/your_username/paes-rag.git
+git clone https://github.com/rovak73/paes-rag.git
 cd paes-rag
 ```
 
@@ -39,7 +50,7 @@ pip install -r requirements.txt
 ```
 
 ### 4. Configure API Keys
-Create a `.env` file with:
+Create a `.env` file with or use .env-example provided:
 ```
 GEMINI_API_KEY=your_gemini_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here  # Optional
@@ -73,7 +84,7 @@ paes-rag/
 │   ├── main.py           # Core application logic
 │   ├── pdf_processor.py  # PDF processing utilities
 │   └── config.py         # Environment and model settings
-│
+├── models/               # Inference models (Llama3, etc..)
 ├── tests/                # Test suite
 ├── data/                 # PDF documents
 ├── requirements.txt      # Project dependencies
