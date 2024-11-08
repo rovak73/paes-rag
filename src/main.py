@@ -4,9 +4,13 @@ Main module for the PAES RAG application.
 from typing import List, Dict
 import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-from langchain.chat_models import ChatOpenAI
+from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain_community.chat_models import ChatOpenAI
+from langchain_community.llms import LlamaCpp
+from langchain.callbacks.manager import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.chains import RetrievalQA
 from .pdf_processor import PDFProcessor
 import src.config as config
@@ -19,9 +23,17 @@ class PAESQuestionAnswerer:
             chunk_size=config.CHUNK_SIZE,
             chunk_overlap=config.CHUNK_OVERLAP
         )
-        self.embeddings = OpenAIEmbeddings(
-            openai_api_key=config.OPENAI_API_KEY
-        )
+        
+        # Choose embeddings based on model type
+        if config.USE_LOCAL_LLM:
+            self.embeddings = HuggingFaceEmbeddings(
+                model_name="sentence-transformers/all-MiniLM-L6-v2"
+            )
+        else:
+            self.embeddings = OpenAIEmbeddings(
+                openai_api_key=config.OPENAI_API_KEY
+            )
+            
         self.vectorstore = None
         self.qa_chain = None
 
@@ -60,11 +72,26 @@ class PAESQuestionAnswerer:
         if not self.vectorstore:
             raise ValueError("Vector store must be created first")
 
-        llm = ChatOpenAI(
-            model_name=config.MODEL_NAME,
-            temperature=0,
-            openai_api_key=config.OPENAI_API_KEY
-        )
+        if config.USE_LOCAL_LLM:
+            # Set up Llama model
+            callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+
+            
+            llm = LlamaCpp(
+                model_path=config.LLAMA_MODEL_PATH,
+                n_ctx=config.LLAMA_N_CTX,
+                n_threads=config.LLAMA_N_THREADS,
+                temperature=config.LLAMA_TEMPERATURE,
+                callback_manager=callback_manager,
+                verbose=True
+            )
+        else:
+            # Set up OpenAI model
+            llm = ChatOpenAI(
+                model_name=config.MODEL_NAME,
+                temperature=0,
+                openai_api_key=config.OPENAI_API_KEY
+            )
 
         self.qa_chain = RetrievalQA.from_chain_type(
             llm=llm,
@@ -95,7 +122,7 @@ class PAESQuestionAnswerer:
         Si la respuesta no se puede encontrar en los documentos, indica que no tienes suficiente información.
         """
 
-        result = self.qa_chain({"query": prompt})
+        result = self.qa_chain.invoke({"query": prompt})
         
         return {
             "question": question,
@@ -122,6 +149,7 @@ def main():
     
     # Interactive question answering loop
     print("\nPAES Question Answerer ready!")
+    print(f"Using {'Llama' if config.USE_LOCAL_LLM else 'OpenAI'} model")
     print("Type 'exit' to quit")
     
     while True:
