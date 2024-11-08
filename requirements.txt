@@ -9,3 +9,5 @@ pytest
 llama-cpp-python
 google.generativeai
 langchain-google-genai
+sentence-transformers
+tokenizers>=0.20.0
