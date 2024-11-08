@@ -87,8 +87,7 @@ class PAESQuestionAnswerer:
             llm = ChatGoogleGenerativeAI(
                 model=config.GEMINI_MODEL,
                 google_api_key=config.GEMINI_API_KEY,
-                temperature=0,
-                convert_system_message_to_human=True
+                temperature=0
             )
         elif config.USE_LOCAL_LLM:
             # Set up Llama model
