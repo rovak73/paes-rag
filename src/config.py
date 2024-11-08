@@ -10,14 +10,14 @@ load_dotenv()
 # API configurations
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-USE_GEMINI = os.getenv("USE_GEMINI", "false").lower() == "true"
+USE_GEMINI = os.getenv("USE_GEMINI", "true").lower() == "true"
 GEMINI_MODEL = "gemini-1.5-pro-002"
 
 # Vector store settings
 CHROMA_PERSIST_DIRECTORY = "data/chroma"
 
 # Model settings
-USE_LOCAL_LLM = os.getenv("USE_LOCAL_LLM", "false").lower() == "true"
+USE_LOCAL_LLM = os.getenv("USE_LOCAL_LLM", "false").lower() == "true" and not USE_GEMINI
 MODEL_NAME = "gpt-3.5-turbo"  # Used when USE_LOCAL_LLM is False
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
