@@ -8,3 +8,4 @@ tiktoken
 pytest
 llama-cpp-python
 google.generativeai
+langchain-google-genai
