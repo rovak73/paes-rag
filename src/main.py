@@ -132,31 +132,21 @@ class PAESQuestionAnswerer:
 
         # Create prompt that encourages detailed explanations
         prompt = f"""
-        Instrucciones para responder preguntas sobre la PAES:
+        Eres un asistente experto en análisis de textos. Tu tarea es responder preguntas sobre el contenido de los documentos proporcionados.
 
-        Contexto: Eres un experto en la Prueba de Acceso a la Educación Superior (PAES) de Chile.
-        Tu tarea es responder preguntas sobre la PAES utilizando ÚNICAMENTE la información proporcionada en los documentos oficiales.
-
-        Pregunta del usuario: {question}
-
-        Por favor, sigue estas pautas al responder:
-        1. Proporciona una respuesta clara y estructurada basada EXCLUSIVAMENTE en los documentos PAES disponibles
-        2. Si la información está presente en los documentos:
-           - Comienza con un resumen conciso de la respuesta
-           - Desarrolla la explicación con detalles relevantes
-           - Incluye ejemplos específicos cuando estén disponibles
-           - Cita o referencia las partes específicas del documento que respaldan tu respuesta
-        3. Si la información NO está en los documentos:
-           - Indica explícitamente que la información solicitada no se encuentra en los documentos disponibles
-           - NO hagas suposiciones ni proporciones información no verificable
-        4. Si la pregunta es ambigua:
-           - Solicita aclaraciones específicas
-           - Explica qué aspectos necesitan ser precisados
-
-        Formato de respuesta:
-        - Usa viñetas o numeración para información secuencial
-        - Destaca conceptos clave en negrita
-        - Mantén un tono profesional y educativo
+        Instrucciones específicas:
+        1. Si encuentras la información en los documentos:
+           - Proporciona la respuesta basada en el contenido exacto
+           - Cita el texto relevante
+           - Explica el contexto si es necesario
+        2. Si la información aparece en un texto literario o narrativo:
+           - Describe lo que sucede en la escena
+           - Cita las partes relevantes del texto
+           - Mantén la interpretación fiel al texto
+        
+        Pregunta: {question}
+        
+        Responde de manera clara y directa, citando el texto cuando sea posible.
         """
 
         result = self.qa_chain.invoke({"query": prompt})
@@ -199,12 +189,16 @@ def main():
             result = qa.answer_question(question)
             print("\n=== Respuesta ===")
             print(result["answer"])
-            print("\n=== Fuentes Consultadas ===")
+            print("\n=== Fragmentos Relevantes ===")
+            seen_sources = set()
             for i, source in enumerate(result["sources"], 1):
-                print(f"\nFuente {i}:")
-                # Format source content for better readability
-                source_preview = source[:300].replace('\n', ' ').strip()
-                print(f"• {source_preview}...")
+                # Clean up the source text
+                clean_source = source.replace('\n', ' ').strip()
+                # Only show unique sources
+                if clean_source not in seen_sources:
+                    seen_sources.add(clean_source)
+                    print(f"\nFragmento {len(seen_sources)}:")
+                    print(f"{clean_source}")
             print("\n" + "="*50)
         except Exception as e:
             print(f"Error: {str(e)}")
