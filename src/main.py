@@ -132,11 +132,31 @@ class PAESQuestionAnswerer:
 
         # Create prompt that encourages detailed explanations
         prompt = f"""
-        Pregunta: {question}
-        
-        Por favor, proporciona una respuesta detallada basada en el contenido de los documentos PAES.
-        Incluye explicaciones paso a paso cuando sea relevante.
-        Si la respuesta no se puede encontrar en los documentos, indica que no tienes suficiente información.
+        Instrucciones para responder preguntas sobre la PAES:
+
+        Contexto: Eres un experto en la Prueba de Acceso a la Educación Superior (PAES) de Chile.
+        Tu tarea es responder preguntas sobre la PAES utilizando ÚNICAMENTE la información proporcionada en los documentos oficiales.
+
+        Pregunta del usuario: {question}
+
+        Por favor, sigue estas pautas al responder:
+        1. Proporciona una respuesta clara y estructurada basada EXCLUSIVAMENTE en los documentos PAES disponibles
+        2. Si la información está presente en los documentos:
+           - Comienza con un resumen conciso de la respuesta
+           - Desarrolla la explicación con detalles relevantes
+           - Incluye ejemplos específicos cuando estén disponibles
+           - Cita o referencia las partes específicas del documento que respaldan tu respuesta
+        3. Si la información NO está en los documentos:
+           - Indica explícitamente que la información solicitada no se encuentra en los documentos disponibles
+           - NO hagas suposiciones ni proporciones información no verificable
+        4. Si la pregunta es ambigua:
+           - Solicita aclaraciones específicas
+           - Explica qué aspectos necesitan ser precisados
+
+        Formato de respuesta:
+        - Usa viñetas o numeración para información secuencial
+        - Destaca conceptos clave en negrita
+        - Mantén un tono profesional y educativo
         """
 
         result = self.qa_chain.invoke({"query": prompt})
@@ -177,11 +197,15 @@ def main():
             
         try:
             result = qa.answer_question(question)
-            print("\nRespuesta:")
+            print("\n=== Respuesta ===")
             print(result["answer"])
-            print("\nFuentes utilizadas:")
+            print("\n=== Fuentes Consultadas ===")
             for i, source in enumerate(result["sources"], 1):
-                print(f"\n{i}. {source[:200]}...")
+                print(f"\nFuente {i}:")
+                # Format source content for better readability
+                source_preview = source[:300].replace('\n', ' ').strip()
+                print(f"• {source_preview}...")
+            print("\n" + "="*50)
         except Exception as e:
             print(f"Error: {str(e)}")
 
