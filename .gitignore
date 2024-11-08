@@ -22,3 +22,4 @@ data/processed/
 
 # Misc
 .DS_Store
+.aider*

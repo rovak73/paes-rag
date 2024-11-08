@@ -107,4 +107,4 @@ The system supports three LLM options:
 MIT License
 
 ## Contact
-[Your contact information]
+rovak73@gmail.com
