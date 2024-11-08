@@ -7,7 +7,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
-import google.generative.ai as genai
+import google.generativeai as genai
 from langchain_community.chat_models import ChatOpenAI
 from langchain_community.llms import LlamaCpp
 from langchain.callbacks.manager import CallbackManager
